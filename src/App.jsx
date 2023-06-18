@@ -30,38 +30,31 @@ const App = () => {
 	);
 };
 
-/* const calculateResult = (formData, setResultData, setError) => {
-	const date = new Date();
-	const currentYear = date.getFullYear();
-	const currentMonth = date.getMonth() + 1;
-	const currentDay = date.getDate();
-	const yearForm = formData.year;
-
-	const years = currentYear - yearForm;
-	let totalMonths;
-	let totalDays;
-
-	if (yearForm > currentYear) {
-		setError(true);
-	} else {
-		setResultData({ years, months: '', days: '' });
-		setError(false);
-	}
-
-};
- */
-
 const calculateResult = (formData, setResultData, setError) => {
 	const today = new Date();
 	const birthday = new Date(formData.year, formData.month - 1, formData.day);
 
 	const millisecondsPerDay = 24 * 60 * 60 * 1000;
 	const ageInMilliseconds = today - birthday;
+	let years = Math.floor(ageInMilliseconds / (365.25 * millisecondsPerDay));
+	let totalMonths = Math.floor(
+		(ageInMilliseconds % (365.25 * millisecondsPerDay)) /
+			(30.44 * millisecondsPerDay)
+	);
+	let totalDays = Math.floor(
+		(ageInMilliseconds % (30.44 * millisecondsPerDay)) / millisecondsPerDay
+	);
+	if (totalMonths === 12) {
+		years++;
 
-	const totalDays = Math.floor(ageInMilliseconds / millisecondsPerDay);
-	const totalMonths = Math.floor(totalDays / 30.44);
-	const years = Math.floor(totalDays / 365.25);
+		totalMonths = 0;
+	}
 
-	const days = totalDays - years;
+	if (totalDays === Math.floor(30.44)) {
+		totalMonths++;
+
+		totalDays = 0;
+	}
+	setResultData({ years, months: totalMonths, days: totalDays });
 };
 export default App;
